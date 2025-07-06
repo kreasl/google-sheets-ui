@@ -1,6 +1,6 @@
 # gdrive-bets
 
-A TypeScript Express.js application with Google Sheets integration for data management.
+A TypeScript Express.js application with Google Sheets integration and NFL data fetching for data management.
 
 ## Project Structure
 ```
@@ -14,13 +14,15 @@ gdrive-bets/
 │   │   ├── users.ts    # Users microservice
 │   │   └── ui.ts       # UI microservice
 │   └── services/       # Service implementations
-│       ├── googleSheetsService.ts  # Google Sheets integration
+│       ├── gamesService.ts       # Games service
+│       ├── googleSheetsService.ts  # Google Sheets service
 │       ├── nflDataService.ts       # NFL data service
-│       ├── orchestrationService.ts # Microservice orchestration
-│       ├── schedulerService.ts     # Task scheduling service
-│       └── uiService.ts            # UI service
+│       ├── orchestrationService.ts # Orchestration service
+│       ├── schedulerService.ts     # Scheduler service
+│       ├── uiService.ts            # UI service
+│       └── usersService.ts         # Users service
 ├── env/                # Environment configuration
-│   └── gdrive-bets-9e3ae1412e88.json  # Google service account credentials
+│   └── %GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS%.json  # Google service account credentials
 ├── package.json        # Project dependencies and scripts
 └── .env                # Environment variables
 ```
@@ -50,34 +52,18 @@ The application runs multiple microservices on different ports:
 - Users microservice: Port 3001
 - UI microservice: Port 3002
 
-## Google Sheets Integration
+### Configuration
+Create a Google Cloud Service Account and download the credentials JSON file.
+Share your Spreadsheet with the service account email with Editor access.
 
-This application features a two-way integration with Google Sheets:
+Register to Odds API and get an API key.
 
-1. **Download data from Google Sheets to CSV**
-   - Script: `src/scripts/google-sheets-to-csv.ts`
-   - Command: `npm run sheets-to-csv`
-
-2. **Upload data from CSV back to Google Sheets**
-   - Script: `src/scripts/update-sheet.ts`
-   - Command: `npm run csv-to-sheet`
-
-### Authentication Setup
-
-1. **Service Account Authentication (Used in this project)**
-   - The project uses a Google service account with the email: `gdrive-bets@gdrive-bets.iam.gserviceaccount.com`
-   - Credentials are stored in: `/env/gdrive-bets-9e3ae1412e88.json`
-   - The spreadsheet ID is: `1ozElsXHgzUwRq-tLMJMjIrDB_k0D5Emyur63ckXgLaQ`
-   - The spreadsheet must be shared with the service account email with Editor access
-
-2. **Configuration**
-   - The following environment variables are used for Google Sheets integration:
-     ```
-     GOOGLE_CREDENTIALS_PATH="./env/gdrive-bets-9e3ae1412e88.json"
-     SPREADSHEET_ID="1ozElsXHgzUwRq-tLMJMjIrDB_k0D5Emyur63ckXgLaQ"
-     SHEET_NAME="Sheet1"
-     OUTPUT_CSV_PATH="./output.csv"
-     ```
+Set the following environment variables:
+  ```
+  GOOGLE_CREDENTIALS_PATH="./env/%GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS%.json"
+  SPREADSHEET_ID="%SPREADSHEET_ID%"
+  ODDS_API_KEY="%ODDS_API_KEY%"
+  ```
 
 ## Other Features
 
@@ -99,9 +85,6 @@ npm run build
 
 # Start the production server
 npm start
-
-# Run in development mode with auto-reload
-npm run dev
 
 # Run in development mode with microservices
 npm run dev:microservices
