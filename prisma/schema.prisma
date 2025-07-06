@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id              String      @id @default(uuid())
+  name            String      @unique
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  homeGames       Game[]      @relation("HomeTeam")
+  awayGames       Game[]      @relation("AwayTeam")
+  
+  @@map("team")
+}
+
+model Game {
+  id            String        @id
+  sportKey      String
+  sportTitle    String
+  commenceTime  DateTime
+  homeTeam      Team          @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  homeTeamId    String
+  awayTeam      Team          @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  awayTeamId    String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  odds      Odd[]
+  result        GameResult?
+  bets          Bet[]
+  
+  @@map("game")
+}
+
+model GameResult {
+  id          String    @id @default(uuid())
+  homeScore   Int
+  awayScore   Int
+  outcome     String    // "home_win", "away_win", or "draw"
+  game        Game      @relation(fields: [gameId], references: [id])
+  gameId      String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@map("game_result")
+}
+
+model Bookmaker {
+  id          String    @id @default(uuid())
+  key         String
+  title       String
+  lastUpdate  DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  odds        Odd[]
+  bets        Bet[]
+  
+  @@unique([key, title])
+  @@map("bookmaker")
+}
+
+model Market {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  lastUpdate  DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  odds        Odd[]
+  bets        Bet[]
+  
+  @@map("market")
+}
+
+model Odd {
+  id          String    @id @default(uuid())
+  price       Float
+  type        String    // Possible values: home_win, away_win, draw
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations to top-level entities
+  game        Game      @relation(fields: [gameId], references: [id])
+  gameId      String
+  bookmaker   Bookmaker @relation(fields: [bookmakerId], references: [id])
+  bookmakerId String
+  market      Market    @relation(fields: [marketId], references: [id])
+  marketId    String
+  
+  @@map("odd")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bets      Bet[]
+  
+  @@map("user")
+}
+
+model Bet {
+  id          String   @id @default(uuid())
+  amount      Float
+  oddType     String   // Possible values: home_win, away_win, draw
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  game        Game     @relation(fields: [gameId], references: [id])
+  gameId      String
+  bookmaker   Bookmaker @relation(fields: [bookmakerId], references: [id])
+  bookmakerId String
+  market      Market   @relation(fields: [marketId], references: [id])
+  marketId    String
+  
+  @@map("bet")
+}
