@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
   res.json({ service: 'users', message: 'Users microservice is running' });
 });
 
-app.post('/bets', async (req, res) => {
+app.post('/bet', async (req, res) => {
   try {
     console.log('Received bet request:', req.body);
     const { userName, gameName, gameDateTime, outcomeType, amount, bookmakerName, marketCode } = req.body;

@@ -100,3 +100,8 @@ Now you should see the games and available odds in your Google Spreadsheet in th
 You can also see, edit and add the bets in the "Bets" sheet.
 
 You can see the user results in the "Results" sheet.
+
+You can also use sevaral endpoints to manage the users and bets.
+- POST http://localhost:3001/bet   - add new bet
+- POST http://localhost:3001/results    - get user results (by name)
+- GET http://localhost:3002/sync-ui    - sync the Google Sheets UI
