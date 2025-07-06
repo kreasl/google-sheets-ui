@@ -6,6 +6,7 @@ import { stopScheduler } from './schedulerService';
 import config from '../config';
 
 const MAX_RETRIES = 3;
+
 const processes: ProcessInfo[] = [];
 let shuttingDown = false;
 
@@ -17,7 +18,7 @@ export function startService(processInfo: ProcessInfo): void {
   
   console.log(`Starting ${processInfo.name} service on port ${processInfo.config.port}...`);
   
-  const filePath = path.resolve(__dirname, '..', processInfo.config.file);
+  const filePath = path.resolve(__dirname, '..', './microservices', processInfo.config.file);
   
   const isDev = process.env.NODE_ENV === 'development' || !existsSync(filePath.replace('.ts', '.js'));
   let childProcess: ChildProcess;
@@ -79,7 +80,6 @@ export function shutdownAll(): void {
 }
 
 export function initializeAndStartServices(microservices: MicroserviceConfig[]): ProcessInfo[] {
-  // Initialize process tracking
   microservices.forEach(service => {
     processes.push({
       process: null,
@@ -89,7 +89,6 @@ export function initializeAndStartServices(microservices: MicroserviceConfig[]):
     });
   });
   
-  // Start services that don't have startManually flag
   processes
     .filter(p => !microservices.find(m => m.name === p.name)?.startManually)
     .forEach(startService);

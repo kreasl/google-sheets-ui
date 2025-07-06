@@ -7,7 +7,6 @@ import UiService from '../services/uiService';
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Create UI service instance
 const uiService = new UiService();
 
 app.use(cors());
@@ -23,22 +22,18 @@ app.get('/sync-ui', async (req, res) => {
   console.log('Sync-UI endpoint called - syncing both games and bets');
   
   try {
-    // Step 1: Sync games from database to Google Sheets
     console.log('Step 1: Syncing games to Google Sheets...');
     const gamesRowsWritten = await uiService.syncGamesToGoogleSheets();
     console.log(`Successfully wrote ${gamesRowsWritten} game rows to Google Sheets`);
     
-    // Step 2: Sync bets from Google Sheets to database
     console.log('Step 2: Syncing bets from Google Sheets to database...');
     const betsResult = await uiService.syncBetsFromGoogleSheets();
     console.log(`Processed ${betsResult.total} bets: ${betsResult.valid} valid, ${betsResult.invalid} invalid, ${betsResult.added} added to sheet`);
     
-    // Step 3: Calculate and sync user results to the Results sheet
     console.log('Step 3: Syncing user results to Google Sheets...');
     const userResultsCount = await uiService.syncUserResultsToGoogleSheets();
     console.log(`Wrote results for ${userResultsCount} users to the Results sheet`);
     
-    // Return combined results
     res.json({ 
       service: 'ui', 
       message: 'UI state synced successfully (games, bets, and user results)', 

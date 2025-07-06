@@ -9,37 +9,22 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "ts-node-dev --respawn src/app.ts",
     "dev:microservices": "cross-env NODE_ENV=development ts-node src/app.ts",
-    "fetch-nfl": "ts-node src/scripts/fetch-nfl-data.ts",
-    "generate-game-results": "ts-node src/scripts/generate-game-results.ts",
-    "generate-users": "ts-node src/scripts/generate-users.ts",
-    "generate-bets": "ts-node src/scripts/generate-bets.ts",
-    "generate-results": "ts-node src/scripts/generate-results.ts",
-    "sheets-to-csv": "ts-node src/scripts/google-sheets-to-csv.ts",
-    "csv-to-sheet": "ts-node src/scripts/update-sheet.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
-    "@types/bull": "^3.15.9",
-    "axios": "^1.6.7",
     "body-parser": "^2.2.0",
-    "bull": "^4.16.5",
     "cors": "^2.8.5",
-    "csv-parser": "^3.2.0",
-    "csv-writer": "^1.6.0",
     "dotenv": "^17.0.1",
     "express": "^4.18.2",
-    "googleapis": "^150.0.1",
-    "redis": "^5.5.6"
+    "googleapis": "^150.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.5",
     "cross-env": "^7.0.3",
-    "nodemon": "^3.0.1",
     "prisma": "^6.11.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

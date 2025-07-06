@@ -176,7 +176,6 @@ export class UiService {
           });
           
           if (existingBet) {
-            // Use type assertion to avoid lint errors until Prisma types are updated
             await this.prisma.bet.update({
               where: { id: existingBet.id },
               data: { 
@@ -214,7 +213,6 @@ export class UiService {
       
       console.log('Checking for bets in database that are not in the sheet...');
       
-      // Use type assertion to avoid lint errors until Prisma types are updated
       const allDbBets = await this.prisma.bet.findMany({
         include: {
           user: true,
@@ -229,7 +227,6 @@ export class UiService {
         } as any
       });
       
-      // Collect bets that need to be added to the sheet
       const betsToAddToSheet = [];
       
       for (const dbBet of allDbBets) {
@@ -237,10 +234,8 @@ export class UiService {
         const dbBetKey = `${bet.userId}_${bet.gameId}_${bet.oddType}`;
         
         if (!sheetBetsMap.has(dbBetKey)) {
-          // Instead of removing from DB, prepare to add to sheet
           console.log(`Found bet ID ${bet.id} for user ${bet.user.name} on game ${bet.gameId} that's not in the sheet - will add to sheet`);
           
-          // Format the bet for the sheet using bookmaker and market directly from the bet entity
           betsToAddToSheet.push({
             user: bet.user.name,
             game_time: bet.game.commenceTime.toISOString(),
@@ -253,17 +248,13 @@ export class UiService {
         }
       }
       
-      // Add the missing bets to the sheet if there are any
       if (betsToAddToSheet.length > 0) {
         console.log(`Adding ${betsToAddToSheet.length} bets from database to Google Sheet`);
         
-        // Get existing sheet data to append to
         const existingBetsData = await this.sheetsService.getSheetData<BetSheetRow>(this.BETS_SHEET_NAME);
         
-        // Combine existing data with new bets
         const updatedBetsData = [...existingBetsData, ...betsToAddToSheet];
         
-        // Update the sheet with the combined data
         await this.sheetsService.updateSheet(this.BETS_SHEET_NAME, updatedBetsData);
         
         console.log(`Successfully added ${betsToAddToSheet.length} bets to the sheet`);
@@ -295,12 +286,11 @@ export class UiService {
   }
   
   private async findGame(gameName: string, gameTime: Date): Promise<any> {
-  // Parse game name in format "HomeTeam vs. AwayTeam"
-  const parts = gameName.split(' vs. ');
-  if (parts.length !== 2) {
-    console.log(`Invalid game name format: ${gameName}`);
-    return null;
-  }
+    const parts = gameName.split(' vs. ');
+    if (parts.length !== 2) {
+      console.log(`Invalid game name format: ${gameName}`);
+      return null;
+    }
   
   const homeTeamName = parts[0];
   const awayTeamName = parts[1];
@@ -368,15 +358,11 @@ export class UiService {
           
           if (betWon) {
             wins++;
-            // For winning bets, we need to find the corresponding odd price from the game's odds
-            // Since Bet doesn't have a direct odd relation, we need to find the odd with matching type
             const matchingOdd = (bet.game as any).odds?.find((odd: any) => odd.type === betWithType.oddType);
             
             if (matchingOdd) {
-              // Add original stake + winnings (stake × (odds - 1))
               remainingAmount += betWithType.amount + betWithType.amount * (matchingOdd.price - 1);
             } else {
-              // If no matching odd is found, just add the original stake
               remainingAmount += betWithType.amount;
               console.warn(`No matching odd found for bet ${bet.id} with type ${betWithType.oddType}`);
             }
@@ -385,7 +371,6 @@ export class UiService {
           }
         }
         
-        // Calculate payout ratio with 4 decimal places and ensure no division by zero
         const payoutRatio = moneyPlaced > 0 ? Number((remainingAmount / moneyPlaced).toFixed(4)) : 0;
         
         return {
