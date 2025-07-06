@@ -37,7 +37,7 @@ app.get('/fetch-nfl-data', async (req, res) => {
   }
 });
 
-app.get('/generate-results', async (req, res) => {
+app.post('/generate-results', async (req, res) => {
   try {
     console.log('Generate results endpoint called');
     const result = await gamesService.generateResults();
@@ -56,8 +56,6 @@ app.get('/generate-results', async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to generate game results' });
   }
 });
-
-
 
 process.on('SIGTERM', async () => {
   console.log('Games service received SIGTERM signal, shutting down gracefully');

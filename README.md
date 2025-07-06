@@ -34,7 +34,7 @@ gdrive-bets/
 - npm (v10 or higher)
 - PostgreSQL database
 
-### Installation
+### Installation and running
 ```bash
 # Install dependencies
 npm install
@@ -54,6 +54,12 @@ The application runs multiple microservices on different ports:
 
 ### Configuration
 Create a Google Cloud Service Account and download the credentials JSON file.
+
+Create a Google Spreadsheet with the following sheets:
+- Games
+- Bets
+- Results
+
 Share your Spreadsheet with the service account email (get the email from the JSON file) with Editor access.
 
 Register to Odds API and get an API key.
@@ -65,33 +71,32 @@ Set the following environment variables:
   ODDS_API_KEY="%ODDS_API_KEY%"
   ```
 
-## Other Features
+### Usage
 
-### NFL Data Integration
-- Fetch NFL data: `npm run fetch-nfl`
-- Generate game results: `npm run generate-game-results`
-
-### User and Bet Management
-- Generate users: `npm run generate-users`
-- Generate bets: `npm run generate-bets`
-- Generate results: `npm run generate-results`
-
-## Development
-
-### Available Scripts
+Run the application:
 ```bash
-# Build the TypeScript code
-npm run build
-
-# Start the production server
-npm start
-
-# Run in development mode with microservices
 npm run dev:microservices
 ```
 
-### Database Configuration
-Set your PostgreSQL database connection string in the `.env` file:
+The application will start and run in development mode. The microservices will be available at the following URLs:
+- Games microservice: http://localhost:3000
+- Users microservice: http://localhost:3001
+- UI microservice: http://localhost:3002
+
+Wait for the NFL games to be fetched and stored in the database. This can take several seconds
+
+or you can call the following endpoint to fetch the NFL games:
+```bash
+GET http://localhost:3000/games/fetch
 ```
-DATABASE_URL="postgresql://username:password@localhost:5432/gdrive_bets?schema=public"
+
+Generate random results for the games:
+```bash
+POST http://localhost:3000/games/generate-results
 ```
+
+Now you should see the games and available odds in your Google Spreadsheet in the "Games" sheet.
+
+You can also see, edit and add the bets in the "Bets" sheet.
+
+You can see the user results in the "Results" sheet.
