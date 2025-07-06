@@ -54,7 +54,7 @@ The application runs multiple microservices on different ports:
 
 ### Configuration
 Create a Google Cloud Service Account and download the credentials JSON file.
-Share your Spreadsheet with the service account email with Editor access.
+Share your Spreadsheet with the service account email (get the email from the JSON file) with Editor access.
 
 Register to Odds API and get an API key.
 
